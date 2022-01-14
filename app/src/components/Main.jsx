@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState} from "react";
+import { connectMetaMaskWallet } from "../blockChian";
 
-export default function Main() {
-  const needs = [
+    
+const needs = [
     {
       id: 7170,
       imageUrl:
@@ -20,12 +21,28 @@ export default function Main() {
       },
     },
   ];
+
+export default function Main() {
+
+    const [userOneAddress, setUserOneAddress] = useState('');
+  const onSign = async () => {
+    let voucher;
+    try {
+      const { signer, signerAddress } = await connectMetaMaskWallet();
+        setUserOneAddress(signerAddress)
+    } catch (e) {
+      console.log("problem Signing: ");
+      console.log(e);
+    }
+  };
   return (
     <div>
       <header className="App-header">
         <p>A Random Need Object</p>
       </header>
       <pre>{JSON.stringify(needs, 0, 2)}</pre>
+          <button onClick={onSign}>User1 - Sign The Done Need</button>
+          <p>{userOneAddress}</p>
     </div>
   );
 }

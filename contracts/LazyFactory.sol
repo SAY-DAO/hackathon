@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./MainFactory.sol";
 import "hardhat/console.sol";
 
 contract LazyFactory is
@@ -66,6 +67,10 @@ contract LazyFactory is
 
     // transfer the token to the buyer
     _transfer(user1, user2, voucher.needId);
+
+    // every token royalty starts here by its signature's signer
+    InterfaceMain mainFactory = InterfaceMain(governanceContract);
+    mainFactory.safeMint(msg.sender, voucher.tokenUri);
 
     uint256 amount = msg.value;
     payable(governanceContract).transfer(amount);

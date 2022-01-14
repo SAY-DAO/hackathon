@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { ethers } from "ethers";
 import { connectMetaMaskWallet } from "../blockChian";
+import LazyFactory from "../build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
 
 const needs = [
   {
@@ -22,24 +24,56 @@ const needs = [
 ];
 
 export default function Main() {
+  const [adminAddress, setAdminAddress] = useState("");
   const [userOneAddress, setUserOneAddress] = useState("");
   const [userTwoAddress, setUserTwoAddress] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [sayFactoryAddress, setSayFactoryAddress] = useState("");
 
+  // Deploy
+  const onDeployFactory = async () => {
+    const { signer } = await connectMetaMaskWallet();
+    const signerFactory = new ethers.ContractFactory(
+      LazyFactory.abi,
+      LazyFactory.bytecode,
+      signer
+    );
+    const artistWalletAddress = await signer.getAddress();
+    const signerContract = await signerFactory.deploy(
+      "SAY",
+      "gSAY",
+      adminAddress
+    );
+    await signerContract.deployTransaction.wait(); // loading before confirmed transaction
+  };
+  // Signature
   const onSign = async () => {
     let voucher;
     try {
       const { signer, signerAddress } = await connectMetaMaskWallet();
       setUserOneAddress(signerAddress);
+
+      const signerFactory = new ethers.ContractFactory(
+        LazyFactory.abi,
+        LazyFactory.bytecode,
+        signer
+      );
+
+      const signerContract = signerFactory.attach(sayFactoryAddress);
+
+      const theSignature = new Voucher({ contract: signerContract, signer });
     } catch (e) {
       console.log("problem Signing: ");
       console.log(e);
     }
   };
 
+  // Mint
   const onMint = async () => {
     const { signer, signerAddress } = await connectMetaMaskWallet();
     setUserTwoAddress(signerAddress);
   };
+
   return (
     <div>
       <header className="App-header">
@@ -47,19 +81,37 @@ export default function Main() {
       </header>
       <pre>{JSON.stringify(needs, 0, 2)}</pre>
       <br />
-      ------------------------------------------------------------
+      1 - ------------------------------------------------------------
       <br />
       <br />
-      <button onClick={onSign}>User1 - Sign The Done Need</button>
-      <p>{userOneAddress}</p>
-      <p>Balance:</p>
+      <div>
+        <button onClick={onSign}>User1 - Sign The Done Need</button>
+        <p>
+          Account 1: <span>{userOneAddress}</span>{" "}
+        </p>
+        <p>
+          Balance: <span>{userOneAddress}</span>{" "}
+        </p>
+        <p>Signature:</p>
+      </div>
       <br />
-      ------------------------------------------------------------
+      2 - ------------------------------------------------------------
       <br />
+      <br />
+      <input
+        onChange={(e) => setInputValue(e.target.value)}
+        value={inputValue}
+        placeholder="signature"
+      />
       <br />
       <button onClick={onMint}>User2 - Mint The Signature</button>
-      <p>{userTwoAddress}</p>
-      <p>Balance:</p>
+      <p>
+        Account 2: <span>{userOneAddress}</span>{" "}
+      </p>
+      <p>
+        Balance: <span>{userTwoAddress}</span>{" "}
+      </p>
+      <p>Minted Signature:{inputValue}</p>
     </div>
   );
 }

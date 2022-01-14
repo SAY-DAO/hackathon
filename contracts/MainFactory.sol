@@ -7,13 +7,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface InterfaceMain {
-  function safeMint(address to, string memory uri) external;
+  function safeMint(
+    address to,
+    uint256 tokenId,
+    string memory uri
+  ) external;
 }
 
 contract SAY is ERC721, ERC721URIStorage, Ownable {
-  using Counters for Counters.Counter;
-
-  Counters.Counter private _tokenIdCounter;
   address payable public marketPlace;
 
   constructor(
@@ -24,9 +25,11 @@ contract SAY is ERC721, ERC721URIStorage, Ownable {
     marketPlace = marketAddress;
   }
 
-  function safeMint(address to, string memory uri) public onlyOwner {
-    uint256 tokenId = _tokenIdCounter.current();
-    _tokenIdCounter.increment();
+  function safeMint(
+    address to,
+    uint256 tokenId,
+    string memory uri
+  ) public onlyOwner {
     _safeMint(to, tokenId);
     _setTokenURI(tokenId, uri);
     setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens

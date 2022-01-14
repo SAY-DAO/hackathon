@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { ethers } from "ethers";
-import { connectMetaMaskWallet } from "../blockChian";
+import {
+  connectMetaMaskWallet,
+  deployLazyFactory,
+  deployMarketPlace,
+} from "../blockChian";
 import LazyFactory from "../build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
+import { Voucher } from "../voucher";
 
 const needs = [
   {
@@ -74,42 +79,69 @@ export default function Main() {
     setUserTwoAddress(signerAddress);
   };
 
+  const onMarketDeploy = async () => {
+    await deployMarketPlace();
+  };
+
   return (
     <div>
+      0 - ------------------------------------------------------------
+      <div style={{ backgroundColor: "lightGray", padding: 50 }}>
       <header className="App-header">
-        <p>A Random Need Object</p>
-      </header>
-      <pre>{JSON.stringify(needs, 0, 2)}</pre>
-      <br />
+          <h4>A Random Need Object</h4>
+        </header>
+        <pre>{JSON.stringify(needs, 0, 2)}</pre>
+        <div style={{ margin: 50}}>
+        <h4>Deploy SAY</h4>
+          <button onClick={onMarketDeploy}>Deploy SAY Contract</button>
+          <p>
+            Treasury Balance: <span>{}</span>
+          </p>
+          <p>
+            address: <span>{}</span>
+          </p>
+        </div>
+        <div style={{ margin: 50}}  >
+        <h4>Deploy Lazy Factory</h4>
+          <button onClick={onMarketDeploy}>Deploy Lazy Factory</button>
+          <p>
+            LazyFactory: <span>{}</span>
+          </p>
+          <p>
+            MainFactory: <span>{}</span>
+          </p>
+        </div>
+        
+        
+      </div>
       1 - ------------------------------------------------------------
-      <br />
-      <br />
+      
       <div>
         <button onClick={onSign}>User1 - Sign The Done Need</button>
         <p>
-          Account 1: <span>{userOneAddress}</span>{" "}
+          Account 1: <span>{userOneAddress}</span>
         </p>
         <p>
-          Balance: <span>{userOneAddress}</span>{" "}
+          Balance: <span>{userOneAddress}</span>
         </p>
         <p>Signature:</p>
       </div>
-      <br />
+      
       2 - ------------------------------------------------------------
-      <br />
-      <br />
+      
+      
       <input
         onChange={(e) => setInputValue(e.target.value)}
         value={inputValue}
         placeholder="signature"
       />
-      <br />
+      
       <button onClick={onMint}>User2 - Mint The Signature</button>
       <p>
-        Account 2: <span>{userOneAddress}</span>{" "}
+        Account 2: <span>{userOneAddress}</span>
       </p>
       <p>
-        Balance: <span>{userTwoAddress}</span>{" "}
+        Balance: <span>{userTwoAddress}</span>
       </p>
       <p>Minted Signature:{inputValue}</p>
     </div>

@@ -1,6 +1,6 @@
 // Mst match the smart contract constants.
-const SIGNING_DOMAIN_NAME = 'SAY';
-const SIGNING_DOMAIN_VERSION = '1';
+const SIGNING_DOMAIN_NAME = "SAY";
+const SIGNING_DOMAIN_VERSION = "1";
 
 class Voucher {
   constructor({ contract, signer }) {
@@ -26,10 +26,7 @@ class Voucher {
   }
 
   async signTransaction(
-    artworkId,
-    title,
-    editionNumber,
-    edition,
+    needId,
     totalInWei,
     totalInDollar,
     firstName,
@@ -39,27 +36,20 @@ class Voucher {
     // define your data types
     const types = {
       Voucher: [
-        { name: 'title', type: 'string' },
-        { name: 'artworkId', type: 'uint256' },
-        { name: 'editionNumber', type: 'string' },
-        { name: 'edition', type: 'string' },
-        { name: 'priceWei', type: 'uint256' },
-        { name: 'priceDollar', type: 'string' },
-        { name: 'tokenUri', type: 'string' },
-        { name: 'content', type: 'string' },
+        { name: "needId", type: "uint256" },
+        { name: "priceWei", type: "uint256" },
+        { name: "priceDollar", type: "string" },
+        { name: "tokenUri", type: "string" },
+        { name: "content", type: "string" },
       ],
     };
-    const theId = `${artworkId}${editionNumber}`;
 
     const voucher = {
-      title,
-      artworkId: parseInt(theId),
-      editionNumber: editionNumber.toLocaleString(),
-      edition: edition.toLocaleString(),
+      needId: parseInt(needId),
       priceWei: totalInWei,
       priceDollar: totalInDollar,
       tokenUri,
-      content: `Hey ${firstName}, You are signing this work to be available for sale!`,
+      content: `Hey, You are signing this done need to be minted!`,
     };
 
     // signer._signTypedData(domain, types, value) =>  returns a raw signature

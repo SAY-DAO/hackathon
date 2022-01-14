@@ -70,7 +70,7 @@ contract LazyFactory is
 
     // every token royalty starts here by its signature's signer
     InterfaceMain mainFactory = InterfaceMain(marketPlace);
-    mainFactory.safeMint(msg.sender, voucher.tokenUri);
+    mainFactory.safeMint(msg.sender, voucher.needId, voucher.tokenUri);
 
     uint256 amount = msg.value;
     payable(marketPlace).transfer(amount);

@@ -16,7 +16,7 @@ contract LazyFactory is
   AccessControl,
   ReentrancyGuard
 {
-  address payable public governanceContract;
+  address payable public marketPlace;
   address payable public signerAddress;
   string private constant SIGNING_DOMAIN_NAME = "SAY";
   string private constant SIGNING_DOMAIN_VERSION = "1";
@@ -40,12 +40,12 @@ contract LazyFactory is
   mapping(address => uint256) private balanceByAddress;
 
   constructor(
-    address payable governanceAddress,
+    address payable marketAddress,
     string memory name,
     string memory symbol,
     address payable signer
   ) ERC721(name, symbol) EIP712(SIGNING_DOMAIN_NAME, SIGNING_DOMAIN_VERSION) {
-    governanceContract = governanceAddress;
+    marketPlace = marketAddress;
     signerAddress = signer;
     _setupRole(SIGNER_ROLE, signerAddress);
   }
@@ -63,17 +63,17 @@ contract LazyFactory is
 
     _safeMint(user1, voucher.needId);
     _setTokenURI(voucher.needId, voucher.tokenUri);
-    setApprovalForAll(governanceContract, true); // sender approves Market Place to transfer tokens
+    setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
 
     // transfer the token to the buyer
     _transfer(user1, user2, voucher.needId);
 
     // every token royalty starts here by its signature's signer
-    InterfaceMain mainFactory = InterfaceMain(governanceContract);
+    InterfaceMain mainFactory = InterfaceMain(marketPlace);
     mainFactory.safeMint(msg.sender, voucher.tokenUri);
 
     uint256 amount = msg.value;
-    payable(governanceContract).transfer(amount);
+    payable(marketPlace).transfer(amount);
 
     emit RedeemedAndMinted(voucher.needId);
   }

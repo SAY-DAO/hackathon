@@ -14,14 +14,14 @@ contract SAY is ERC721, ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
 
   Counters.Counter private _tokenIdCounter;
-  address payable public governanceContract;
+  address payable public marketPlace;
 
   constructor(
-    address payable governanceAddress,
+    address payable marketAddress,
     string memory name,
     string memory symbol
   ) ERC721(name, symbol) {
-    governanceContract = governanceAddress;
+    marketPlace = marketAddress;
   }
 
   function safeMint(address to, string memory uri) public onlyOwner {
@@ -29,7 +29,7 @@ contract SAY is ERC721, ERC721URIStorage, Ownable {
     _tokenIdCounter.increment();
     _safeMint(to, tokenId);
     _setTokenURI(tokenId, uri);
-    setApprovalForAll(governanceContract, true); // sender approves Market Place to transfer tokens
+    setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
   }
 
   // The following functions are overrides required by Solidity.

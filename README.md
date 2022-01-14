@@ -16,7 +16,7 @@
 - virtual families receive confirmation receipts/reports at every step to make everything more transparent.
 
 # **How it works:**(After Hackathon);
-#Add on top of existing product
+Add on top of existing product
 - users (virtual families) sign their done needs with Metamask
 - a pool of signature with different properties are available to be minted
 - users mint signatures (ERC721) and release this governance token to the associated signers and themselves

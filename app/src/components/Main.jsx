@@ -97,7 +97,8 @@ export default function Main() {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "50%", textAlign: "center", margin: "auto" }}>
+      <h2>SAY DAO</h2>
       <MintSteps
         needs={needs}
         onMarketDeploy={onMarketDeploy}

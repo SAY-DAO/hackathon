@@ -22,7 +22,7 @@ export default function MintSteps({
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
   return (
-    <div>
+    <div style={{ textAlign: "left" }}>
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

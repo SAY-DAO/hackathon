@@ -49,7 +49,7 @@ export async function deployMainFactory(marketPlaceAddress) {
     const mainFactoryContract = await mainFactory.deploy(
       marketPlaceAddress,
       "SAY",
-      "gSAY",
+      "impact",
     );
     await mainFactoryContract.deployTransaction.wait(); // loading before confirmed transaction
     return mainFactoryContract.address;
@@ -75,7 +75,7 @@ export async function deployLazyFactory(
       marketPlaceAddress,
       mainFactoryAddress,
       "SAY",
-      "gSAY",
+      "liberate",
       signerAddress
     );
     await signerContract.deployTransaction.wait(); // loading before confirmed transaction

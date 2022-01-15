@@ -21,7 +21,8 @@ class Voucher {
       verifyingContract: this.contract.address,
       chainId,
     };
-
+    console.log('chainId')
+    console.log(chainId)
     return this.domainData;
   }
 

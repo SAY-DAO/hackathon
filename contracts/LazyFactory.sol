@@ -64,14 +64,12 @@ contract LazyFactory is
     require(user1 != user2, "Can not mint your own signature");
     require(hasRole(SIGNER_ROLE, signerAddress), "Invalid Signature");
 
+    // user 1 NFT
     _safeMint(user1, voucher.needId);
     _setTokenURI(voucher.needId, voucher.tokenUri);
     setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
 
-    // transfer the token to the buyer
-    _transfer(user1, user2, voucher.needId);
-
-    // every token royalty starts here by its signature's signer
+    // user 2 NFT
     InterfaceMain mainFactoryInterface = InterfaceMain(mainFactory);
     mainFactoryInterface.safeMint(msg.sender, voucher.needId, voucher.tokenUri);
 

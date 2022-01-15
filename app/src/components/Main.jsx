@@ -98,18 +98,28 @@ export default function Main() {
   return (
     <div>
       <div style={{ backgroundColor: "lightGray", padding: 20 }}>
-        <button onClick={onMainFactoryDeploy}>Deploy SAY Main Factory</button>
         <button onClick={onMarketDeploy}>Deploy SAY Market</button>
+        <button onClick={onMainFactoryDeploy}>Deploy SAY Main Factory</button>
 
         <div style={{ margin: 30 }}>
           <p>
             Treasury Balance: <span>{}</span>
           </p>
           <p>
-            market address: <span>{marketAddress}</span>
+            market address:{" "}
+            <span>
+              <a href={`https://goerli.etherscan.io/address/${marketAddress}`}>
+                {marketAddress}
+              </a>
+            </span>
           </p>
           <p>
-            main address: <span>{mainFactoryAddress}</span>
+            main address:{" "}
+            <span>
+              <a href={`https://goerli.etherscan.io/address/${mainFactoryAddress}`}>
+                {mainFactoryAddress}
+              </a>
+            </span>
           </p>
         </div>
       </div>
@@ -119,7 +129,12 @@ export default function Main() {
 
         <div style={{ margin: 30 }}>
           <p>
-            address: <span>{lazyAddress}</span>
+            address:{" "}
+            <span>
+              <a href={`https://goerli.etherscan.io/address/${lazyAddress}`}>
+                {lazyAddress}
+              </a>
+            </span>
           </p>
         </div>
         <div>

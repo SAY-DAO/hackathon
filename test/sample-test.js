@@ -4,7 +4,7 @@ const { Voucher } = require("../app/src/voucher");
 const { ethers } = hardhat;
 
 async function deploy() {
-  const [signer, redeemer, newBuyer, _] = await ethers.getSigners();
+  const [signer, redeemer, newBuyer] = await ethers.getSigners();
 
   const fee = ethers.utils.parseUnits("0.00000001", "ether");
 

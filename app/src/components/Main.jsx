@@ -98,7 +98,7 @@ export default function Main() {
 
   return (
     <div style={{ maxWidth: "50%", textAlign: "center", margin: "auto" }}>
-      <h2>SAY DAO</h2>
+      <h2>SAY DAO - ETH Global</h2>
       <MintSteps
         needs={needs}
         onMarketDeploy={onMarketDeploy}

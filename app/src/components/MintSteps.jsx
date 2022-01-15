@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export default function MintSteps({
   needs,
@@ -21,6 +22,24 @@ export default function MintSteps({
   inputValue,
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
+
+  useEffect(() => {
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+  }, []);
+
   return (
     <div style={{ textAlign: "left" }}>
       <Accordion>
@@ -33,10 +52,16 @@ export default function MintSteps({
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            <button onClick={onMarketDeploy}>Deploy SAY Market</button>
-            <button onClick={onMainFactoryDeploy}>
-              Deploy SAY Main Factory
-            </button>
+            <LoadingButton variant="contained" onClick={onMarketDeploy}>
+              1-Deploy SAY Market
+            </LoadingButton>
+            <LoadingButton
+              sx={{ margin: 2 }}
+              variant="contained"
+              onClick={onMainFactoryDeploy}
+            >
+              2 -Deploy SAY Main Factory
+            </LoadingButton>
 
             <div style={{ margin: 30 }}>
               <p>
@@ -76,11 +101,13 @@ export default function MintSteps({
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
-            <button onClick={onLazyFactoryDeploy}>Deploy Lazy Factory</button>
+            <LoadingButton variant="contained" onClick={onLazyFactoryDeploy}>
+              Deploy Lazy Factory
+            </LoadingButton>
 
             <div style={{ margin: 30 }}>
               <p>
-                address:{" "}
+                address:
                 <span>
                   <a
                     href={`https://goerli.etherscan.io/address/${lazyAddress}`}
@@ -92,7 +119,8 @@ export default function MintSteps({
             </div>
             <div>
               <div style={{ margin: 30 }}>
-                <button
+                <LoadingButton
+                  variant="contained"
                   type="button"
                   className="collapsible"
                   style={{
@@ -107,15 +135,19 @@ export default function MintSteps({
                   }}
                 >
                   Need Details
-                </button>
+                </LoadingButton>
                 <div className="content">
                   <img src={needs[0].imageUrl} alt="icon" width={50} />
                   <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
-                  <pre>{JSON.stringify(needs, 0, 2)}</pre>
+                  <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
+                    {JSON.stringify(needs, 0, 2)}
+                  </pre>
                 </div>
               </div>
               <div style={{ margin: 30 }}>
-                <button onClick={onSign}>Sign The Done Need</button>
+                <LoadingButton variant="contained" onClick={onSign}>
+                  Sign The Done Need
+                </LoadingButton>
                 <p>
                   Account 1: <span>{userOneAddress}</span>
                 </p>
@@ -134,7 +166,8 @@ export default function MintSteps({
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ margin: 30 }}>
-            <button
+            <LoadingButton
+              variant="contained"
               type="button"
               className="collapsible"
               style={{
@@ -149,13 +182,16 @@ export default function MintSteps({
               }}
             >
               Voucher Details
-            </button>
+            </LoadingButton>
             <div className="content">
-              <pre>
+              <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
                 {voucher && voucher.signature && JSON.stringify(voucher, 0, 2)}
               </pre>
             </div>
-            <button onClick={onMint}> Mint The Signature</button>
+            <LoadingButton variant="contained" onClick={onMint}>
+              {" "}
+              Mint The Signature
+            </LoadingButton>
             <p>
               Account 2: <span>{userTwoAddress}</span>
             </p>

@@ -27,9 +27,8 @@ class Voucher {
 
   async signTransaction(
     needId,
-    totalInWei,
-    totalInDollar,
-    firstName,
+    priceWei,
+    priceDollar,
     tokenUri
   ) {
     const domain = await this.designDomain();
@@ -46,8 +45,8 @@ class Voucher {
 
     const voucher = {
       needId: parseInt(needId),
-      priceWei: totalInWei,
-      priceDollar: totalInDollar,
+      priceWei: priceWei,
+      priceDollar: priceDollar,
       tokenUri,
       content: `Hey, You are signing this done need to be minted!`,
     };

@@ -4,6 +4,8 @@ import {
   connectMetaMaskWallet,
   deployLazyFactory,
   deployMarketPlace,
+  mintTheSignature,
+  signDoneNeed,
 } from "../blockChian";
 import LazyFactory from "../build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
 import { Voucher } from "../voucher";
@@ -33,8 +35,9 @@ export default function Main() {
   const [userOneAddress, setUserOneAddress] = useState("");
   const [userTwoAddress, setUserTwoAddress] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const [sayFactoryAddress, setSayFactoryAddress] = useState("");
-
+  const [marketAddress, setMarketAddress] = useState("");
+  const [lazyAddress, setLazyAddress] = useState("");
+  const [voucher, setVoucher] = useState();
   useEffect(() => {
     var coll = document.getElementsByClassName("collapsible");
     var i;
@@ -52,61 +55,97 @@ export default function Main() {
     }
   }, []);
 
-  // Deploy
-  const onDeployFactory = async () => {
-    const { signer } = await connectMetaMaskWallet();
-    const signerFactory = new ethers.ContractFactory(
-      LazyFactory.abi,
-      LazyFactory.bytecode,
-      signer
-    );
-    const artistWalletAddress = await signer.getAddress();
-    const signerContract = await signerFactory.deploy(
-      "SAY",
-      "gSAY",
-      adminAddress
-    );
-    await signerContract.deployTransaction.wait(); // loading before confirmed transaction
-  };
   // Signature
   const onSign = async () => {
-    let voucher;
-    try {
-      const { signer, signerAddress } = await connectMetaMaskWallet();
-      setUserOneAddress(signerAddress);
-
-      const signerFactory = new ethers.ContractFactory(
-        LazyFactory.abi,
-        LazyFactory.bytecode,
-        signer
-      );
-
-      const signerContract = signerFactory.attach(sayFactoryAddress);
-
-      const theSignature = new Voucher({ contract: signerContract, signer });
-    } catch (e) {
-      console.log("problem Signing: ");
-      console.log(e);
-    }
+    const { voucher, signerAddress } = await signDoneNeed(
+      lazyAddress,
+      needs[0].id,
+      2000,
+      0.1
+    );
+    setUserOneAddress(signerAddress);
+    setVoucher(voucher);
   };
 
   // Mint
   const onMint = async () => {
     const { signer, signerAddress } = await connectMetaMaskWallet();
     setUserTwoAddress(signerAddress);
+    const redeemed = await mintTheSignature(lazyAddress, voucher);
+    console.log(redeemed);
   };
 
+  // Deploys
   const onMarketDeploy = async () => {
-    await deployMarketPlace();
+    const marketPlaceAddress = await deployMarketPlace();
+    setMarketAddress(marketPlaceAddress);
+  };
+
+  const onLazyFactoryDeploy = async () => {
+    const lazyFactoryAddress = await deployLazyFactory(marketAddress);
+    setLazyAddress(lazyFactoryAddress);
   };
 
   return (
     <div>
-      A - ------------------------------------------------------------
       <div style={{ backgroundColor: "lightGray", padding: 20 }}>
-        <div style={{ margin: 30 }}>
-          <h4>1 - A Random Need Object</h4>
+        <button onClick={onMarketDeploy}>Deploy SAY Contract</button>
 
+        <div style={{ margin: 30 }}>
+          <p>
+            Treasury Balance: <span>{}</span>
+          </p>
+          <p>
+            address: <span>{marketAddress}</span>
+          </p>
+        </div>
+      </div>
+
+      <div style={{ backgroundColor: "black", color: "white", padding: 20 }}>
+        <button onClick={onLazyFactoryDeploy}>Deploy Lazy Factory</button>
+
+        <div style={{ margin: 30 }}>
+          <p>
+            address: <span>{lazyAddress}</span>
+          </p>
+        </div>
+        <div>
+          <div style={{ margin: 30 }}>
+            <button
+              type="button"
+              className="collapsible"
+              style={{
+                backgroundColor: "#777",
+                color: "white",
+                cursor: "pointer",
+                padding: "10px",
+                border: "none",
+                textAlign: "left",
+                outline: "none",
+                fontSize: "15px",
+              }}
+            >
+              Need Details
+            </button>
+            <div className="content">
+              <img src={needs[0].imageUrl} alt="icon" width={50} />
+              <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
+              <pre>{JSON.stringify(needs, 0, 2)}</pre>
+            </div>
+          </div>
+          <div style={{ margin: 30 }}>
+            <button onClick={onSign}>Sign The Done Need</button>
+            <p>
+              Account 1: <span>{userOneAddress}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <h5>
+        User2 -------------------------------------------------------------
+      </h5>
+      <div style={{ backgroundColor: "#287a32", color: "white", padding: 20 }}>
+        <div style={{ margin: 30 }}>
           <button
             type="button"
             className="collapsible"
@@ -114,74 +153,26 @@ export default function Main() {
               backgroundColor: "#777",
               color: "white",
               cursor: "pointer",
-              padding: "18px",
+              padding: "10px",
               border: "none",
               textAlign: "left",
               outline: "none",
               fontSize: "15px",
             }}
           >
-            Details
+            Voucher Details
           </button>
           <div className="content">
-            <pre>{JSON.stringify(needs, 0, 2)}</pre>
-            <img src={needs[0].imageUrl} alt="icon" width={50} />
-            <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
+            <pre>
+              {voucher && voucher.signature && JSON.stringify(voucher, 0, 2)}
+            </pre>
           </div>
+          <button onClick={onMint}> Mint The Signature</button>
+          <p>
+            Account 2: <span>{userTwoAddress}</span>
+          </p>
+          <p>Minted Signature:{inputValue}</p>
         </div>
-
-        <div style={{ margin: 30 }}>
-          <h4>2 - Deploy SAY</h4>
-          <button onClick={onMarketDeploy}>Deploy SAY Contract</button>
-          <p>
-            Treasury Balance: <span>{}</span>
-          </p>
-          <p>
-            address: <span>{}</span>
-          </p>
-        </div>
-      </div>
-      B - ------------------------------------------------------------
-      <div style={{ backgroundColor: "black", color: "white", padding: 20 }}>
-        <div style={{ margin: 30 }}>
-          <h4>Deploy Lazy Factory</h4>
-          <button onClick={onMarketDeploy}>Deploy Lazy Factory</button>
-          <p>
-            LazyFactory: <span>{}</span>
-          </p>
-          <p>
-            MainFactory: <span>{}</span>
-          </p>
-        </div>
-        <div style={{ margin: 30 }}>
-          <button onClick={onSign}>User1 - Sign The Done Need</button>
-          <p>
-            Account 1: <span>{userOneAddress}</span>
-          </p>
-          <p>
-            Balance: <span>{userOneAddress}</span>
-          </p>
-          <p>Signature:</p>
-        </div>
-      </div>
-      C - ------------------------------------------------------------
-      <div style={{ backgroundColor: "black", color: "white", padding: 20 }}>
-        <div style={{ margin: 30 }}>
-        <input
-          onChange={(e) => setInputValue(e.target.value)}
-          value={inputValue}
-          placeholder="signature"
-        />
-        <button onClick={onMint}>User2 - Mint The Signature</button>
-        <p>
-          Account 2: <span>{userOneAddress}</span>
-        </p>
-        <p>
-          Balance: <span>{userTwoAddress}</span>
-        </p>
-        <p>Minted Signature:{inputValue}</p>
-          </div>
-       
       </div>
     </div>
   );

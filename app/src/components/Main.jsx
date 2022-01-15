@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import React, { useState } from "react";
 import {
   connectMetaMaskWallet,
   deployLazyFactory,
@@ -8,10 +7,9 @@ import {
   mintTheSignature,
   signDoneNeed,
 } from "../blockChian";
-import LazyFactory from "../build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
-import { Voucher } from "../voucher";
 import MintSteps from "./MintSteps";
-
+import { Box, Grid } from "@mui/material";
+import '../assets/style.css'
 const needs = [
   {
     id: 7170,
@@ -33,15 +31,16 @@ const needs = [
 ];
 
 export default function Main() {
-  const [adminAddress, setAdminAddress] = useState("");
-  const [userOneAddress, setUserOneAddress] = useState("");
-  const [userTwoAddress, setUserTwoAddress] = useState("");
-  const [inputValue, setInputValue] = useState("");
-  const [marketAddress, setMarketAddress] = useState("");
-  const [mainFactoryAddress, setMainFactoryAddress] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [userOneAddress, setUserOneAddress] = useState();
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [userTwoAddress, setUserTwoAddress] = useState();
+  const [inputValue, setInputValue] = useState();
+  const [marketAddress, setMarketAddress] = useState();
+  const [mainFactoryAddress, setMainFactoryAddress] = useState();
   const [lazyAddress, setLazyAddress] = useState("");
   const [voucher, setVoucher] = useState();
-
 
   // Signature
   const onSign = async () => {
@@ -65,40 +64,82 @@ export default function Main() {
 
   // Deploys
   const onMainFactoryDeploy = async () => {
+    setIsLoading(true);
     const mainFactory = await deployMainFactory(marketAddress);
     setMainFactoryAddress(mainFactory);
+    setIsLoading(false);
   };
   const onMarketDeploy = async () => {
+    setIsLoading(true);
     const marketPlaceAddress = await deployMarketPlace();
     setMarketAddress(marketPlaceAddress);
+    setIsLoading(false);
   };
 
   const onLazyFactoryDeploy = async () => {
+    setIsLoading(true);
     const lazyFactoryAddress = await deployLazyFactory(
       marketAddress,
       mainFactoryAddress
     );
     setLazyAddress(lazyFactoryAddress);
+    setIsLoading(false);
   };
 
   return (
-    <div style={{ maxWidth: "50%", textAlign: "center", margin: "auto" }}>
-      <h2>SAY DAO - ETH Global</h2>
-      <MintSteps
-        needs={needs}
-        onMarketDeploy={onMarketDeploy}
-        onMainFactoryDeploy={onMainFactoryDeploy}
-        marketAddress={marketAddress}
-        mainFactoryAddress={mainFactoryAddress}
-        onLazyFactoryDeploy={onLazyFactoryDeploy}
-        lazyAddress={lazyAddress}
-        onSign={onSign}
-        userOneAddress={userOneAddress}
-        voucher={voucher}
-        onMint={onMint}
-        userTwoAddress={userTwoAddress}
-        inputValue={inputValue}
-      />
-    </div>
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-around"
+      alignItems="center"
+      spacing={5}
+      sx={{ padding: 10 }}
+    >
+      <Grid item xs={8} sx={{ textAlign: "center" }}>
+        <h2>SAY DAO - ETH Global</h2>
+
+        <MintSteps
+          isLoading={isLoading}
+          isDisabled={isDisabled}
+          needs={needs}
+          onMarketDeploy={onMarketDeploy}
+          onMainFactoryDeploy={onMainFactoryDeploy}
+          marketAddress={marketAddress}
+          mainFactoryAddress={mainFactoryAddress}
+          onLazyFactoryDeploy={onLazyFactoryDeploy}
+          lazyAddress={lazyAddress}
+          onSign={onSign}
+          userOneAddress={userOneAddress}
+          voucher={voucher}
+          onMint={onMint}
+          userTwoAddress={userTwoAddress}
+          inputValue={inputValue}
+        />
+      </Grid>
+      <Grid item xs={4}>
+        <Box
+          sx={{
+            width: 100,
+            height: 300,
+            padding: 2,
+            backgroundColor: "rgb(18, 105, 72)",
+            "&:hover": {
+              backgroundColor: "primary.main",
+              opacity: [0.9, 0.8, 0.7],
+            },
+          }}
+        >
+          <div className="circle">
+            <p className="text">Impact</p>
+          </div>
+          <div className="circle">
+            <p className="text">Liberate</p>
+          </div>
+          <div className="circle">
+            <p className="text">The NFT</p>
+          </div>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }

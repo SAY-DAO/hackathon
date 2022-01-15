@@ -1,0 +1,14 @@
+
+  .circle {
+    display: flex;
+    width: 100px;
+    height: 100px;
+    background-color: rgb(159, 213, 219);
+    border-radius: 50%;
+  }
+  
+
+
+  .text {
+    margin: auto;
+  }

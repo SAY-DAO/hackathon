@@ -5,6 +5,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Grid } from "@mui/material";
 
 export default function MintSteps({
   needs,
@@ -20,13 +21,12 @@ export default function MintSteps({
   onMint,
   userTwoAddress,
   inputValue,
+  isLoading,
+  isDisabled,
 }) {
-  const [isDisabled, setIsDisabled] = useState(false);
-
   useEffect(() => {
     var coll = document.getElementsByClassName("collapsible");
     var i;
-
     for (i = 0; i < coll.length; i++) {
       coll[i].addEventListener("click", function () {
         this.classList.toggle("active");
@@ -48,14 +48,43 @@ export default function MintSteps({
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>SAY Smart Contracts</Typography>
+          <div>
+            <h4>SAY Smart Contracts</h4>
+            <p>
+              Treasury:
+              <span>
+                <a
+                  href={`https://goerli.etherscan.io/address/${marketAddress}`}
+                >
+                  {marketAddress}
+                </a>
+              </span>
+            </p>
+            <p>
+              MainFactory:
+              <span>
+                <a
+                  href={`https://goerli.etherscan.io/address/${mainFactoryAddress}`}
+                >
+                  {mainFactoryAddress}
+                </a>
+              </span>
+            </p>
+          </div>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
-            <LoadingButton variant="contained" onClick={onMarketDeploy}>
+          <Grid>
+            <LoadingButton
+              disabled={marketAddress}
+              loading={isLoading}
+              variant="contained"
+              onClick={onMarketDeploy}
+            >
               1-Deploy SAY Market
             </LoadingButton>
             <LoadingButton
+              loading={isLoading}
+              disabled={!marketAddress || mainFactoryAddress}
               sx={{ margin: 2 }}
               variant="contained"
               onClick={onMainFactoryDeploy}
@@ -67,28 +96,8 @@ export default function MintSteps({
               <p>
                 Treasury Balance: <span>{}</span>
               </p>
-              <p>
-                market address:{" "}
-                <span>
-                  <a
-                    href={`https://goerli.etherscan.io/address/${marketAddress}`}
-                  >
-                    {marketAddress}
-                  </a>
-                </span>
-              </p>
-              <p>
-                main address:{" "}
-                <span>
-                  <a
-                    href={`https://goerli.etherscan.io/address/${mainFactoryAddress}`}
-                  >
-                    {mainFactoryAddress}
-                  </a>
-                </span>
-              </p>
             </div>
-          </Typography>
+          </Grid>
         </AccordionDetails>
       </Accordion>
       <Accordion>
@@ -97,64 +106,75 @@ export default function MintSteps({
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>User 1: Take care of the need and sign</Typography>
+          <div>
+            <p>
+              Wallet: <span>{userOneAddress}</span>
+            </p>
+            <p>
+              LazyFactory:
+              <span>
+                <a href={`https://goerli.etherscan.io/address/${lazyAddress}`}>
+                  {lazyAddress}
+                </a>
+              </span>
+            </p>
+          </div>
+          <h4>User 1: Take care of the need and sign</h4>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
-            <LoadingButton variant="contained" onClick={onLazyFactoryDeploy}>
-              Deploy Lazy Factory
-            </LoadingButton>
-
+          <Grid>
             <div style={{ margin: 30 }}>
-              <p>
-                address:
-                <span>
-                  <a
-                    href={`https://goerli.etherscan.io/address/${lazyAddress}`}
-                  >
-                    {lazyAddress}
-                  </a>
-                </span>
-              </p>
+              <LoadingButton
+                loading={isLoading}
+                disabled={!mainFactoryAddress || lazyAddress}
+                variant="contained"
+                onClick={onLazyFactoryDeploy}
+              >
+                Deploy Lazy Factory
+              </LoadingButton>
             </div>
+
             <div>
               <div style={{ margin: 30 }}>
                 <LoadingButton
+                  disabled={!lazyAddress}
                   variant="contained"
+                  color="secondary"
                   type="button"
                   className="collapsible"
                   style={{
-                    backgroundColor: "#777",
-                    color: "white",
                     cursor: "pointer",
                     padding: "10px",
                     border: "none",
                     textAlign: "left",
                     outline: "none",
-                    fontSize: "15px",
+                    fontSize: "10px",
                   }}
                 >
                   Need Details
                 </LoadingButton>
-          
+
                 <div className="content">
-                  <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
-                    {JSON.stringify(needs, 0, 2)}
-                  </pre>
+                  {lazyAddress && (
+                    <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
+                      {JSON.stringify(needs, 0, 2)}
+                    </pre>
+                  )}
                 </div>
                 <img src={needs[0].imageUrl} alt="icon" width={50} />
                 <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
               </div>
               <div style={{ margin: 30 }}>
-                <LoadingButton variant="contained" onClick={onSign}>
+                <LoadingButton
+                  disabled={!lazyAddress}
+                  variant="contained"
+                  onClick={onSign}
+                >
                   Sign The Done Need
                 </LoadingButton>
-                <p>
-                  Account 1: <span>{userOneAddress}</span>
-                </p>
               </div>
             </div>
-          </Typography>
+          </Grid>
         </AccordionDetails>
       </Accordion>
       <Accordion disabled={isDisabled}>
@@ -163,23 +183,30 @@ export default function MintSteps({
           aria-controls="panel3a-content"
           id="panel3a-header"
         >
-          <Typography>User 2: Mint two NFTS (Liberty, Impact)</Typography>
+          <div>
+            <h4>User 2: Mint two NFTS (Liberty, Impact)</h4>
+            <p>
+              Account 2: <span>{userTwoAddress}</span>
+            </p>
+            <p>Minted Signature:{inputValue}</p>
+          </div>
         </AccordionSummary>
         <AccordionDetails>
-          <div style={{ margin: 30 }}>
+          <Grid style={{ margin: 30 }}>
             <LoadingButton
+              disabled={!voucher}
               variant="contained"
+              color="secondary"
               type="button"
               className="collapsible"
               style={{
-                backgroundColor: "#777",
-                color: "white",
                 cursor: "pointer",
                 padding: "10px",
                 border: "none",
                 textAlign: "left",
                 outline: "none",
-                fontSize: "15px",
+                fontSize: "10px",
+                margin: 5,
               }}
             >
               Voucher Details
@@ -189,14 +216,11 @@ export default function MintSteps({
                 {voucher && voucher.signature && JSON.stringify(voucher, 0, 2)}
               </pre>
             </div>
+            <br />
             <LoadingButton variant="contained" onClick={onMint}>
               Mint The Signature
             </LoadingButton>
-            <p>
-              Account 2: <span>{userTwoAddress}</span>
-            </p>
-            <p>Minted Signature:{inputValue}</p>
-          </div>
+          </Grid>
         </AccordionDetails>
       </Accordion>
     </div>

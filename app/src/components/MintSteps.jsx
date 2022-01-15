@@ -136,13 +136,14 @@ export default function MintSteps({
                 >
                   Need Details
                 </LoadingButton>
+          
                 <div className="content">
-                  <img src={needs[0].imageUrl} alt="icon" width={50} />
-                  <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
                   <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
                     {JSON.stringify(needs, 0, 2)}
                   </pre>
                 </div>
+                <img src={needs[0].imageUrl} alt="icon" width={50} />
+                <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
               </div>
               <div style={{ margin: 30 }}>
                 <LoadingButton variant="contained" onClick={onSign}>
@@ -189,7 +190,6 @@ export default function MintSteps({
               </pre>
             </div>
             <LoadingButton variant="contained" onClick={onMint}>
-              {" "}
               Mint The Signature
             </LoadingButton>
             <p>

@@ -49,7 +49,7 @@ export async function deployMainFactory(marketPlaceAddress) {
     const mainFactoryContract = await mainFactory.deploy(
       marketPlaceAddress,
       "SAY",
-      "impact",
+      "impact"
     );
     await mainFactoryContract.deployTransaction.wait(); // loading before confirmed transaction
     return mainFactoryContract.address;
@@ -154,6 +154,21 @@ export async function mintTheSignature(lazyAddress, voucher) {
     const eventTokenId = parseInt(transactionData.events[2].args.tokenId);
     const { transactionHash } = transactionData;
     return { eventTokenId, transactionHash };
+  } catch (e) {
+    console.log("problem buying: ");
+    console.log({ e });
+  }
+}
+
+export async function fetchTreasuryBalance(contractAddress) {
+  try {
+    window.ethereum.request({ method: "eth_requestAccounts" });
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const balance = await provider.getBalance(contractAddress);
+
+    const balanceInEth = ethers.utils.formatEther(balance);
+    return balanceInEth;
   } catch (e) {
     console.log("problem buying: ");
     console.log({ e });

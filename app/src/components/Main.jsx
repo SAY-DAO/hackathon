@@ -9,7 +9,11 @@ import {
 } from "../blockChian";
 import MintSteps from "./MintSteps";
 import { Box, Grid } from "@mui/material";
-import '../assets/style.css'
+import "../assets/style.css";
+import impact from "../assets/impact.png";
+import liberate from "../assets/liberate.png";
+// import decentralize from "../assets/decentralize.png";
+
 const needs = [
   {
     id: 7170,
@@ -32,15 +36,14 @@ const needs = [
 
 export default function Main() {
   const [isLoading, setIsLoading] = useState(false);
-  
   const [userOneAddress, setUserOneAddress] = useState();
   const [isDisabled, setIsDisabled] = useState(false);
   const [userTwoAddress, setUserTwoAddress] = useState();
-  const [inputValue, setInputValue] = useState();
   const [marketAddress, setMarketAddress] = useState();
   const [mainFactoryAddress, setMainFactoryAddress] = useState();
-  const [lazyAddress, setLazyAddress] = useState("");
+  const [lazyAddress, setLazyAddress] = useState();
   const [voucher, setVoucher] = useState();
+  const [mintHash, setMintHash] = useState();
 
   // Signature
   const onSign = async () => {
@@ -58,8 +61,8 @@ export default function Main() {
   const onMint = async () => {
     const { signerAddress } = await connectMetaMaskWallet();
     setUserTwoAddress(signerAddress);
-    const redeemed = await mintTheSignature(lazyAddress, voucher);
-    console.log(redeemed);
+    const { transactionHash } = await mintTheSignature(lazyAddress, voucher);
+    setMintHash(transactionHash);
   };
 
   // Deploys
@@ -100,6 +103,7 @@ export default function Main() {
 
         <MintSteps
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
           isDisabled={isDisabled}
           needs={needs}
           onMarketDeploy={onMarketDeploy}
@@ -113,7 +117,7 @@ export default function Main() {
           voucher={voucher}
           onMint={onMint}
           userTwoAddress={userTwoAddress}
-          inputValue={inputValue}
+          mintHash={mintHash}
         />
       </Grid>
       <Grid item xs={4}>
@@ -129,14 +133,28 @@ export default function Main() {
             },
           }}
         >
+          {mintHash ? (
+            <>
+              <div className="circle">
+                <img src={impact} style={{ padding: 10 }} alt="icon" />
+              </div>
+              <div className="circle">
+                <img src={liberate} style={{ padding: 10 }} alt="icon" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="circle">
+                <p className="text">Impact</p>
+              </div>
+              <div className="circle">
+                <p className="text">Liberate</p>
+              </div>
+            </>
+          )}
+
           <div className="circle">
-            <p className="text">Impact</p>
-          </div>
-          <div className="circle">
-            <p className="text">Liberate</p>
-          </div>
-          <div className="circle">
-            <p className="text">The NFT</p>
+            <p className="text">Decentralize</p>
           </div>
         </Box>
       </Grid>

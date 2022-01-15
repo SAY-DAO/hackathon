@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Grid } from "@mui/material";
+import { fetchTreasuryBalance } from "../blockChian";
 
 export default function MintSteps({
   needs,
@@ -20,10 +21,13 @@ export default function MintSteps({
   voucher,
   onMint,
   userTwoAddress,
-  inputValue,
+  setIsLoading,
   isLoading,
   isDisabled,
+  mintHash,
 }) {
+  const [balance, setBalance] = useState(0);
+
   useEffect(() => {
     var coll = document.getElementsByClassName("collapsible");
     var i;
@@ -40,6 +44,12 @@ export default function MintSteps({
     }
   }, []);
 
+  const balanceHandler = async () => {
+    setIsLoading(true);
+    const theBalance = await fetchTreasuryBalance(marketAddress);
+    setBalance(theBalance);
+    setIsLoading(false);
+  };
   return (
     <div style={{ textAlign: "left" }}>
       <Accordion>
@@ -91,11 +101,17 @@ export default function MintSteps({
             >
               2 -Deploy SAY Main Factory
             </LoadingButton>
-
-            <div style={{ margin: 30 }}>
+            <div>
               <p>
-                Treasury Balance: <span>{}</span>
+                Treasury Balance: <span>{balance} ether</span>
               </p>
+              <LoadingButton
+                onClick={balanceHandler}
+                disabled={!marketAddress}
+                variant="outlined"
+              >
+                Balance
+              </LoadingButton>
             </div>
           </Grid>
         </AccordionDetails>
@@ -107,8 +123,9 @@ export default function MintSteps({
           id="panel2a-header"
         >
           <div>
+            <h4>User 1: Take care of the need and sign (Impact) </h4>
             <p>
-              Wallet: <span>{userOneAddress}</span>
+              Account 1: <span>{userOneAddress}</span>
             </p>
             <p>
               LazyFactory:
@@ -119,7 +136,6 @@ export default function MintSteps({
               </span>
             </p>
           </div>
-          <h4>User 1: Take care of the need and sign</h4>
         </AccordionSummary>
         <AccordionDetails>
           <Grid>
@@ -184,11 +200,64 @@ export default function MintSteps({
           id="panel3a-header"
         >
           <div>
-            <h4>User 2: Mint two NFTS (Liberty, Impact)</h4>
+            <h4>User 2: Mint two NFTS (Liberate)</h4>
             <p>
               Account 2: <span>{userTwoAddress}</span>
             </p>
-            <p>Minted Signature:{inputValue}</p>
+
+            <p>
+              TX:
+              <span>
+                <a href={`https://goerli.etherscan.io/tx/${mintHash}`}>
+                  {mintHash}
+                </a>
+              </span>
+            </p>
+          </div>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid style={{ margin: 30 }}>
+            <LoadingButton
+              disabled={!voucher}
+              variant="contained"
+              color="secondary"
+              type="button"
+              className="collapsible"
+              style={{
+                cursor: "pointer",
+                padding: "10px",
+                border: "none",
+                textAlign: "left",
+                outline: "none",
+                fontSize: "10px",
+                margin: 5,
+              }}
+            >
+              Voucher Details
+            </LoadingButton>
+            <div className="content">
+              <pre style={{ maxWidth: "100%", overflow: "scroll" }}>
+                {voucher && voucher.signature && JSON.stringify(voucher, 0, 2)}
+              </pre>
+            </div>
+            <br />
+            <LoadingButton variant="contained" onClick={onMint}>
+              Mint The Signature
+            </LoadingButton>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion disabled={isDisabled}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel3a-content"
+          id="panel3a-header"
+        >
+          <div>
+            <h4>User 3: Mint The Final NFT (Decentralize)</h4>
+            <p>
+              Account 3: <span>{userTwoAddress}</span>
+            </p>
           </div>
         </AccordionSummary>
         <AccordionDetails>

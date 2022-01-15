@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import {
   connectMetaMaskWallet,
@@ -21,7 +21,7 @@ const needs = [
     doneAt: "Sat, 25 Dec 2021 04:45:36 GMT",
     child: {
       id: 3,
-      sayName: "Mahmood",
+      sayName: "Atousa",
       avatarUrl:
         "https://api.sayapp.company/files/3-child/3-sleptAvatar_0010010003.png",
     },
@@ -34,6 +34,23 @@ export default function Main() {
   const [userTwoAddress, setUserTwoAddress] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [sayFactoryAddress, setSayFactoryAddress] = useState("");
+
+  useEffect(() => {
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+  }, []);
 
   // Deploy
   const onDeployFactory = async () => {
@@ -85,14 +102,36 @@ export default function Main() {
 
   return (
     <div>
-      0 - ------------------------------------------------------------
-      <div style={{ backgroundColor: "lightGray", padding: 50 }}>
-      <header className="App-header">
-          <h4>A Random Need Object</h4>
-        </header>
-        <pre>{JSON.stringify(needs, 0, 2)}</pre>
-        <div style={{ margin: 50}}>
-        <h4>Deploy SAY</h4>
+      A - ------------------------------------------------------------
+      <div style={{ backgroundColor: "lightGray", padding: 20 }}>
+        <div style={{ margin: 30 }}>
+          <h4>1 - A Random Need Object</h4>
+
+          <button
+            type="button"
+            className="collapsible"
+            style={{
+              backgroundColor: "#777",
+              color: "white",
+              cursor: "pointer",
+              padding: "18px",
+              border: "none",
+              textAlign: "left",
+              outline: "none",
+              fontSize: "15px",
+            }}
+          >
+            Details
+          </button>
+          <div className="content">
+            <pre>{JSON.stringify(needs, 0, 2)}</pre>
+            <img src={needs[0].imageUrl} alt="icon" width={50} />
+            <img src={needs[0].child.avatarUrl} alt="icon" width={50} />
+          </div>
+        </div>
+
+        <div style={{ margin: 30 }}>
+          <h4>2 - Deploy SAY</h4>
           <button onClick={onMarketDeploy}>Deploy SAY Contract</button>
           <p>
             Treasury Balance: <span>{}</span>
@@ -101,8 +140,11 @@ export default function Main() {
             address: <span>{}</span>
           </p>
         </div>
-        <div style={{ margin: 50}}  >
-        <h4>Deploy Lazy Factory</h4>
+      </div>
+      B - ------------------------------------------------------------
+      <div style={{ backgroundColor: "black", color: "white", padding: 20 }}>
+        <div style={{ margin: 30 }}>
+          <h4>Deploy Lazy Factory</h4>
           <button onClick={onMarketDeploy}>Deploy Lazy Factory</button>
           <p>
             LazyFactory: <span>{}</span>
@@ -111,39 +153,36 @@ export default function Main() {
             MainFactory: <span>{}</span>
           </p>
         </div>
-        
-        
+        <div style={{ margin: 30 }}>
+          <button onClick={onSign}>User1 - Sign The Done Need</button>
+          <p>
+            Account 1: <span>{userOneAddress}</span>
+          </p>
+          <p>
+            Balance: <span>{userOneAddress}</span>
+          </p>
+          <p>Signature:</p>
+        </div>
       </div>
-      1 - ------------------------------------------------------------
-      
-      <div>
-        <button onClick={onSign}>User1 - Sign The Done Need</button>
+      C - ------------------------------------------------------------
+      <div style={{ backgroundColor: "black", color: "white", padding: 20 }}>
+        <div style={{ margin: 30 }}>
+        <input
+          onChange={(e) => setInputValue(e.target.value)}
+          value={inputValue}
+          placeholder="signature"
+        />
+        <button onClick={onMint}>User2 - Mint The Signature</button>
         <p>
-          Account 1: <span>{userOneAddress}</span>
+          Account 2: <span>{userOneAddress}</span>
         </p>
         <p>
-          Balance: <span>{userOneAddress}</span>
+          Balance: <span>{userTwoAddress}</span>
         </p>
-        <p>Signature:</p>
+        <p>Minted Signature:{inputValue}</p>
+          </div>
+       
       </div>
-      
-      2 - ------------------------------------------------------------
-      
-      
-      <input
-        onChange={(e) => setInputValue(e.target.value)}
-        value={inputValue}
-        placeholder="signature"
-      />
-      
-      <button onClick={onMint}>User2 - Mint The Signature</button>
-      <p>
-        Account 2: <span>{userOneAddress}</span>
-      </p>
-      <p>
-        Balance: <span>{userTwoAddress}</span>
-      </p>
-      <p>Minted Signature:{inputValue}</p>
     </div>
   );
 }

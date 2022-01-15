@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 interface InterfaceMain {
@@ -14,8 +14,9 @@ interface InterfaceMain {
   ) external;
 }
 
-contract SAY is ERC721, ERC721URIStorage, Ownable {
+contract MainFactory is ERC721, ERC721URIStorage, AccessControl {
   address payable public marketPlace;
+  event Minted(string indexed tokenUri);
 
   constructor(
     address payable marketAddress,
@@ -28,11 +29,12 @@ contract SAY is ERC721, ERC721URIStorage, Ownable {
   function safeMint(
     address to,
     uint256 tokenId,
-    string memory uri
-  ) public onlyOwner {
+    string memory tokenUri
+  ) external {
     _safeMint(to, tokenId);
-    _setTokenURI(tokenId, uri);
+    _setTokenURI(tokenId, tokenUri);
     setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
+    emit Minted(tokenUri);
   }
 
   // The following functions are overrides required by Solidity.
@@ -47,5 +49,17 @@ contract SAY is ERC721, ERC721URIStorage, Ownable {
     returns (string memory)
   {
     return super.tokenURI(tokenId);
+  }
+
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(AccessControl, ERC721)
+    returns (bool)
+  {
+    return
+      ERC721.supportsInterface(interfaceId) ||
+      AccessControl.supportsInterface(interfaceId);
   }
 }

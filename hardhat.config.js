@@ -24,6 +24,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.4",
   networks: {
+    rinkeby: {
+      url: process.env.ALCHEMY_RINKEBY_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:
@@ -36,5 +40,8 @@ module.exports = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  mocha: {
+    timeout: 80000,
   },
 };

@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import {
   connectMetaMaskWallet,
   deployLazyFactory,
+  deployMainFactory,
   deployMarketPlace,
   mintTheSignature,
   signDoneNeed,
@@ -36,6 +37,7 @@ export default function Main() {
   const [userTwoAddress, setUserTwoAddress] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [marketAddress, setMarketAddress] = useState("");
+  const [mainFactoryAddress, setMainFactoryAddress] = useState("");
   const [lazyAddress, setLazyAddress] = useState("");
   const [voucher, setVoucher] = useState();
   useEffect(() => {
@@ -69,34 +71,45 @@ export default function Main() {
 
   // Mint
   const onMint = async () => {
-    const { signer, signerAddress } = await connectMetaMaskWallet();
+    const { signerAddress } = await connectMetaMaskWallet();
     setUserTwoAddress(signerAddress);
     const redeemed = await mintTheSignature(lazyAddress, voucher);
     console.log(redeemed);
   };
 
   // Deploys
+  const onMainFactoryDeploy = async () => {
+    const mainFactory = await deployMainFactory(marketAddress);
+    setMainFactoryAddress(mainFactory);
+  };
   const onMarketDeploy = async () => {
     const marketPlaceAddress = await deployMarketPlace();
     setMarketAddress(marketPlaceAddress);
   };
 
   const onLazyFactoryDeploy = async () => {
-    const lazyFactoryAddress = await deployLazyFactory(marketAddress);
+    const lazyFactoryAddress = await deployLazyFactory(
+      marketAddress,
+      mainFactoryAddress
+    );
     setLazyAddress(lazyFactoryAddress);
   };
 
   return (
     <div>
       <div style={{ backgroundColor: "lightGray", padding: 20 }}>
-        <button onClick={onMarketDeploy}>Deploy SAY Contract</button>
+        <button onClick={onMainFactoryDeploy}>Deploy SAY Main Factory</button>
+        <button onClick={onMarketDeploy}>Deploy SAY Market</button>
 
         <div style={{ margin: 30 }}>
           <p>
             Treasury Balance: <span>{}</span>
           </p>
           <p>
-            address: <span>{marketAddress}</span>
+            market address: <span>{marketAddress}</span>
+          </p>
+          <p>
+            main address: <span>{mainFactoryAddress}</span>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import LazyFactory from "./build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
 import MarketPlace from "./build/contracts/artifacts/contracts/MarketPlace.sol/MarketPlace.json";
+import MainFactory from "./build/contracts/artifacts/contracts/MainFactory.sol/MainFactory.json";
 import { Voucher } from "./voucher";
 
 export async function connectMetaMaskWallet() {
@@ -36,7 +37,32 @@ export async function deployMarketPlace() {
   }
 }
 
-export async function deployLazyFactory(marketPlaceAddress) {
+export async function deployMainFactory(marketPlaceAddress) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+    const mainFactory = new ethers.ContractFactory(
+      MainFactory.abi,
+      MainFactory.bytecode,
+      signer
+    );
+
+    const mainFactoryContract = await mainFactory.deploy(
+      marketPlaceAddress,
+      "SAY",
+      "gSAY",
+    );
+    await mainFactoryContract.deployTransaction.wait(); // loading before confirmed transaction
+    return mainFactoryContract.address;
+  } catch (e) {
+    console.log("problem deploying: ");
+    console.log(e);
+  }
+}
+
+export async function deployLazyFactory(
+  marketPlaceAddress,
+  mainFactoryAddress
+) {
   try {
     const { signer } = await connectMetaMaskWallet();
     const signerFactory = new ethers.ContractFactory(
@@ -47,6 +73,7 @@ export async function deployLazyFactory(marketPlaceAddress) {
     const signerAddress = await signer.getAddress();
     const signerContract = await signerFactory.deploy(
       marketPlaceAddress,
+      mainFactoryAddress,
       "SAY",
       "gSAY",
       signerAddress

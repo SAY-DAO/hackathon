@@ -24,5 +24,5 @@ Add on top of existing product
 - user 3 can use any two NFT pairs to create a collicteble NGT with a random art created from the signatures and NFT pair.
 
   - NFT1 (**Impact** - **Governance**) - for taking care of a need 
-  - NFT1 (**Liberate** - **Governance**) - for minting and giving moe governance token to the community
+  - NFT2 (**Liberate** - **Governance**) - for minting and giving moe governance token to the community
   - NFT3 (**Decentralize** - **Collectible**) - upload a portion of the database to IPFS 

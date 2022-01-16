@@ -46,6 +46,9 @@ export default function Main() {
   const [finalFactoryAddress, setFinalFactoryAddress] = useState();
   const [voucher, setVoucher] = useState();
   const [mintHash, setMintHash] = useState();
+  const [finalMintHash, setFinalMintHash] = useState();
+
+  const [ipfsUrl, setIpfsUrl] = useState("");
 
   // Signature
   const onSign = async () => {
@@ -131,6 +134,10 @@ export default function Main() {
           onMint={onMint}
           userTwoAddress={userTwoAddress}
           mintHash={mintHash}
+          finalMintHash={finalMintHash}
+          setFinalMintHash={setFinalMintHash}
+          setIpfsUrl={setIpfsUrl}
+          ipfsUrl={ipfsUrl}
         />
       </Grid>
       <Grid item xs={4}>
@@ -167,9 +174,17 @@ export default function Main() {
             </>
           )}
 
+          {!ipfsUrl || !finalMintHash ? (
           <div className="circle">
             <p className="text">Decentralize</p>
           </div>
+          ) : (
+            <div className="circle">
+            <img src={ipfsUrl} alt='lastNFT' style={{borderRadius: '100%', padding: 10}} />
+          </div>
+          )}
+
+        
         </Box>
       </Grid>
     </Grid>

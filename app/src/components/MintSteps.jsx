@@ -34,14 +34,16 @@ export default function MintSteps({
   isLoading,
   isDisabled,
   mintHash,
+  finalMintHash,
+  setFinalMintHash,
+  setIpfsUrl,
+  ipfsUrl,
 }) {
   const [balance, setBalance] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [finalButton, setFinalButton] = useState(false);
   const [tokenUriButton, setTokenUriButton] = useState(false);
   const [userThreeAddress, setUserThreeAddress] = useState();
-  const [finalMintHash, setFinalMintHash] = useState();
-  const [ipfsUrl, setIpfsUrl] = useState("");
   const [tokenURI, setTokenURI] = useState();
   useEffect(() => {
     var coll = document.getElementsByClassName("collapsible");
@@ -96,26 +98,6 @@ export default function MintSteps({
     setIsLoading(false);
   };
 
-  // Final Mint
-  const onFinalMint = async () => {
-    const lazyUri = lazyTokenUri();
-    setTokenUriButton(true);
-
-    setIsLoading(true);
-    const { signerAddress } = await connectMetaMaskWallet();
-    setUserThreeAddress(signerAddress);
-    const { transactionHash } = await mintThePair(
-      finalFactoryAddress,
-      inputValue
-      // ipfs
-    );
-    setFinalMintHash(transactionHash);
-    setIsLoading(false);
-    if (transactionHash) {
-      setTokenUriButton(true);
-    }
-  };
-
   // tokenUri LazyFactory
   const lazyTokenUri = async () => {
     setIsLoading(true);
@@ -156,14 +138,33 @@ export default function MintSteps({
 
             const url = `${process.env.REACT_APP_IPFS}/ipfs/${added.path}`;
             setIpfsUrl(url);
-
-          } catch (e) {
-          }
+          } catch (e) {}
         }
 
-        myImage.src = objectURL;
-        document.getElementById("myImg").appendChild(myImage);
+        // myImage.src = objectURL;
+        // document.getElementById("myImg").appendChild(myImage);
       });
+  };
+
+  // Final Mint
+  const onFinalMint = async () => {
+    handleIpfsUpload();
+    const lazyUri = lazyTokenUri();
+    setTokenUriButton(true);
+
+    setIsLoading(true);
+    const { signerAddress } = await connectMetaMaskWallet();
+    setUserThreeAddress(signerAddress);
+    const  transactionHash  = await mintThePair(
+      finalFactoryAddress,
+      inputValue,
+      ipfsUrl
+    );
+    setFinalMintHash(transactionHash);
+    setIsLoading(false);
+    if (transactionHash) {
+      setTokenUriButton(true);
+    }
   };
 
   return (
@@ -452,9 +453,9 @@ export default function MintSteps({
             </Box>
 
             <br />
-            <div id="myImg">
+            {/* <div id="myImg">
               <button onClick={handleIpfsUpload}>file</button>
-            </div>
+            </div> */}
           </Grid>
         </AccordionDetails>
       </Accordion>

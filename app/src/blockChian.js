@@ -277,12 +277,10 @@ export async function mintThePair(finalFactoryAddress, pairId, ipfs) {
       }
     );
     const transactionData = await transaction.wait();
-
-    console.log(transactionData);
-
-    return transactionData;
+    const { transactionHash } = transactionData;
+    return transactionHash;
   } catch (e) {
-    console.log("problem buying: ");
+    console.log("problem mintThePair: ");
     console.log({ e });
   }
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { Grid } from "@mui/material";
@@ -10,9 +9,9 @@ import { fetchTreasuryBalance } from "../blockChian";
 
 export default function MintSteps({
   needs,
-  onMarketDeploy,
+  onTreasuryDeploy,
   onMainFactoryDeploy,
-  marketAddress,
+  treasuryAddress,
   mainFactoryAddress,
   onLazyFactoryDeploy,
   lazyAddress,
@@ -46,7 +45,7 @@ export default function MintSteps({
 
   const balanceHandler = async () => {
     setIsLoading(true);
-    const theBalance = await fetchTreasuryBalance(marketAddress);
+    const theBalance = await fetchTreasuryBalance(treasuryAddress);
     setBalance(theBalance);
     setIsLoading(false);
   };
@@ -64,9 +63,9 @@ export default function MintSteps({
               Treasury:
               <span>
                 <a
-                  href={`https://goerli.etherscan.io/address/${marketAddress}`}
+                  href={`https://goerli.etherscan.io/address/${treasuryAddress}`}
                 >
-                  {marketAddress}
+                  {treasuryAddress}
                 </a>
               </span>
             </p>
@@ -85,16 +84,16 @@ export default function MintSteps({
         <AccordionDetails>
           <Grid>
             <LoadingButton
-              disabled={marketAddress}
+              disabled={treasuryAddress}
               loading={isLoading}
               variant="contained"
-              onClick={onMarketDeploy}
+              onClick={onTreasuryDeploy}
             >
-              1-Deploy SAY Market
+              1-Deploy SAY Treasury
             </LoadingButton>
             <LoadingButton
               loading={isLoading}
-              disabled={!marketAddress || mainFactoryAddress}
+              disabled={!treasuryAddress || mainFactoryAddress}
               sx={{ margin: 2 }}
               variant="contained"
               onClick={onMainFactoryDeploy}
@@ -107,7 +106,7 @@ export default function MintSteps({
               </p>
               <LoadingButton
                 onClick={balanceHandler}
-                disabled={!marketAddress}
+                disabled={!treasuryAddress}
                 variant="outlined"
               >
                 Balance

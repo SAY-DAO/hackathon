@@ -15,15 +15,15 @@ interface InterfaceMain {
 }
 
 contract MainFactory is ERC721, ERC721URIStorage, AccessControl {
-  address payable public marketPlace;
+  address payable public Treasury;
   event Minted(string indexed tokenUri);
 
   constructor(
-    address payable marketAddress,
+    address payable treasuryAddress,
     string memory name,
     string memory symbol
   ) ERC721(name, symbol) {
-    marketPlace = marketAddress;
+    Treasury = treasuryAddress;
   }
 
   function safeMint(
@@ -33,7 +33,7 @@ contract MainFactory is ERC721, ERC721URIStorage, AccessControl {
   ) external {
     _safeMint(to, tokenId);
     _setTokenURI(tokenId, tokenUri);
-    setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
+    setApprovalForAll(Treasury, true); // sender approves treasury to transfer tokens
     emit Minted(tokenUri);
   }
 

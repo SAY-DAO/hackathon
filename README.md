@@ -1,4 +1,4 @@
-![image](/assets/hackathon.png)
+![image](app/src/assets/final-design.png)
 
 
 # **How it works:** (Before Hackathon)
@@ -19,6 +19,10 @@
 Add on top of existing product
 - users (virtual families) sign their done needs with Metamask
 - a pool of signature with different properties are available to be minted
-- users mint signatures (ERC721) and release this governance token to the associated signers and themselves
+- user-2 mint signatures (ERC721) and release **TWO** governance token to the associated signer and themselves.
 - minter's value will be hold in a treasury (smart contract) for the future DAO
+- user 3 can use any two NFT pairs to create a collicteble NGT with a random art created from the signatures and NFT pair.
 
+  - NFT1 (**Impact** - **Governance**) - for taking care of a need 
+  - NFT1 (**Liberate** - **Governance**) - for minting and giving moe governance token to the community
+  - NFT3 (**Decentralize** - **Collectible**) - upload a portion of the database to IPFS 

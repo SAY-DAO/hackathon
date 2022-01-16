@@ -16,7 +16,7 @@ contract LazyFactory is
   AccessControl,
   ReentrancyGuard
 {
-  address payable public marketPlace;
+  address payable public Treasury;
   address payable public mainFactory;
   address payable public signerAddress;
   string private constant SIGNING_DOMAIN_NAME = "SAY";
@@ -41,13 +41,13 @@ contract LazyFactory is
   mapping(address => uint256) private balanceByAddress;
 
   constructor(
-    address payable marketAddress,
+    address payable treasuryAddress,
     address payable mainFactoryAddress,
     string memory name,
     string memory symbol,
     address payable signer
   ) ERC721(name, symbol) EIP712(SIGNING_DOMAIN_NAME, SIGNING_DOMAIN_VERSION) {
-    marketPlace = marketAddress;
+    Treasury = treasuryAddress;
     mainFactory = mainFactoryAddress;
     signerAddress = signer;
     _setupRole(SIGNER_ROLE, signerAddress);
@@ -67,14 +67,14 @@ contract LazyFactory is
     // user 1 NFT
     _safeMint(user1, voucher.needId);
     _setTokenURI(voucher.needId, voucher.tokenUri);
-    setApprovalForAll(marketPlace, true); // sender approves Market Place to transfer tokens
+    setApprovalForAll(Treasury, true); // sender approves Treasury to transfer tokens
 
     // user 2 NFT
     InterfaceMain mainFactoryInterface = InterfaceMain(mainFactory);
     mainFactoryInterface.safeMint(msg.sender, voucher.needId, voucher.tokenUri);
 
     uint256 amount = msg.value;
-    payable(marketPlace).transfer(amount);
+    payable(Treasury).transfer(amount);
 
     emit RedeemedAndMinted(voucher.needId);
   }

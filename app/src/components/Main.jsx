@@ -3,7 +3,7 @@ import {
   connectMetaMaskWallet,
   deployLazyFactory,
   deployMainFactory,
-  deployMarketPlace,
+  deployTreasury,
   mintTheSignature,
   signDoneNeed,
 } from "../blockChian";
@@ -39,7 +39,7 @@ export default function Main() {
   const [userOneAddress, setUserOneAddress] = useState();
   const [isDisabled, setIsDisabled] = useState(false);
   const [userTwoAddress, setUserTwoAddress] = useState();
-  const [marketAddress, setMarketAddress] = useState();
+  const [treasuryAddress, setTreasuryAddress] = useState();
   const [mainFactoryAddress, setMainFactoryAddress] = useState();
   const [lazyAddress, setLazyAddress] = useState();
   const [voucher, setVoucher] = useState();
@@ -68,21 +68,21 @@ export default function Main() {
   // Deploys
   const onMainFactoryDeploy = async () => {
     setIsLoading(true);
-    const mainFactory = await deployMainFactory(marketAddress);
+    const mainFactory = await deployMainFactory(treasuryAddress);
     setMainFactoryAddress(mainFactory);
     setIsLoading(false);
   };
-  const onMarketDeploy = async () => {
+  const onTreasuryDeploy = async () => {
     setIsLoading(true);
-    const marketPlaceAddress = await deployMarketPlace();
-    setMarketAddress(marketPlaceAddress);
+    const TreasuryAddress = await deployTreasury();
+    setTreasuryAddress(TreasuryAddress);
     setIsLoading(false);
   };
 
   const onLazyFactoryDeploy = async () => {
     setIsLoading(true);
     const lazyFactoryAddress = await deployLazyFactory(
-      marketAddress,
+      treasuryAddress,
       mainFactoryAddress
     );
     setLazyAddress(lazyFactoryAddress);
@@ -106,9 +106,9 @@ export default function Main() {
           setIsLoading={setIsLoading}
           isDisabled={isDisabled}
           needs={needs}
-          onMarketDeploy={onMarketDeploy}
+          onTreasuryDeploy={onTreasuryDeploy}
           onMainFactoryDeploy={onMainFactoryDeploy}
-          marketAddress={marketAddress}
+          treasuryAddress={treasuryAddress}
           mainFactoryAddress={mainFactoryAddress}
           onLazyFactoryDeploy={onLazyFactoryDeploy}
           lazyAddress={lazyAddress}

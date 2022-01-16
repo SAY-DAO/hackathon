@@ -8,18 +8,18 @@ async function deploy() {
 
   const fee = ethers.utils.parseUnits("0.00000001", "ether");
 
-  const marketFactory = await ethers.getContractFactory("MarketPlace");
-  const marketContract = await marketFactory.deploy();
-  await marketContract.deployed();
-  const marketAddress = marketContract.address;
+  const treasuryFactory = await ethers.getContractFactory("Treasury");
+  const treasuryContract = await treasuryFactory.deploy();
+  await treasuryContract.deployed();
+  const treasuryAddress = treasuryContract.address;
   const mainFactory = await ethers.getContractFactory("MainFactory");
-  const mainContract = await mainFactory.deploy(marketAddress, "SAY", "gSAY");
+  const mainContract = await mainFactory.deploy(treasuryAddress, "SAY", "gSAY");
   await mainContract.deployed();
   const mainFactoryAddress = await mainContract.address;
 
   const lazyFactory = await ethers.getContractFactory("LazyFactory", signer);
   const lazyContract = await lazyFactory.deploy(
-    marketAddress,
+    treasuryAddress,
     mainFactoryAddress,
     "SAY",
     "gSAY",
@@ -38,19 +38,19 @@ async function deploy() {
     newBuyer,
     lazyContract,
     redeemerContract,
-    marketContract,
+    treasuryContract,
     mainContract,
     fee,
   };
 }
 
-describe("MarketPlace", function () {
-  it("Should deploy MarketPlace", async function () {
-    const marketFactory = await ethers.getContractFactory("MarketPlace");
-    const marketContract = await marketFactory.deploy();
-    await marketContract.deployed();
-    const marketPlaceAddress = marketContract.address;
-    expect(marketPlaceAddress).not.to.equal(0);
+describe("Treasury", function () {
+  it("Should deploy Treasury", async function () {
+    const treasuryFactory = await ethers.getContractFactory("Treasury");
+    const treasuryContract = await treasuryFactory.deploy();
+    await treasuryContract.deployed();
+    const treasuryAddress = treasuryContract.address;
+    expect(treasuryAddress).not.to.equal(0);
   });
 
   it("Should deploy lazyFactory and mainFactory and sign a voucher", async function () {

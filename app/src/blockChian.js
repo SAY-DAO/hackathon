@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import LazyFactory from "./build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
-import MarketPlace from "./build/contracts/artifacts/contracts/MarketPlace.sol/MarketPlace.json";
+import Treasury from "./build/contracts/artifacts/contracts/Treasury.sol/Treasury.json";
 import MainFactory from "./build/contracts/artifacts/contracts/MainFactory.sol/MainFactory.json";
 import { Voucher } from "./voucher";
 
@@ -19,25 +19,25 @@ export async function connectMetaMaskWallet() {
   }
 }
 
-export async function deployMarketPlace() {
+export async function deployTreasury() {
   try {
     const { signer } = await connectMetaMaskWallet();
-    const marketPlaceFactory = new ethers.ContractFactory(
-      MarketPlace.abi,
-      MarketPlace.bytecode,
+    const treasuryFactory = new ethers.ContractFactory(
+      Treasury.abi,
+      Treasury.bytecode,
       signer
     );
 
-    const marketPlaceContract = await marketPlaceFactory.deploy();
-    await marketPlaceContract.deployTransaction.wait(); // loading before confirmed transaction
-    return marketPlaceContract.address;
+    const TreasuryContract = await treasuryFactory.deploy();
+    await TreasuryContract.deployTransaction.wait(); // loading before confirmed transaction
+    return TreasuryContract.address;
   } catch (e) {
     console.log("problem deploying: ");
     console.log(e);
   }
 }
 
-export async function deployMainFactory(marketPlaceAddress) {
+export async function deployMainFactory(TreasuryAddress) {
   try {
     const { signer } = await connectMetaMaskWallet();
     const mainFactory = new ethers.ContractFactory(
@@ -47,7 +47,7 @@ export async function deployMainFactory(marketPlaceAddress) {
     );
 
     const mainFactoryContract = await mainFactory.deploy(
-      marketPlaceAddress,
+      TreasuryAddress,
       "SAY",
       "impact"
     );
@@ -60,7 +60,7 @@ export async function deployMainFactory(marketPlaceAddress) {
 }
 
 export async function deployLazyFactory(
-  marketPlaceAddress,
+  TreasuryAddress,
   mainFactoryAddress
 ) {
   try {
@@ -72,7 +72,7 @@ export async function deployLazyFactory(
     );
     const signerAddress = await signer.getAddress();
     const signerContract = await signerFactory.deploy(
-      marketPlaceAddress,
+      TreasuryAddress,
       mainFactoryAddress,
       "SAY",
       "liberate",

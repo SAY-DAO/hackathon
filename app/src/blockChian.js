@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import LazyFactory from "./build/contracts/artifacts/contracts/LazyFactory.sol/LazyFactory.json";
+import FinalFactory from "./build/contracts/artifacts/contracts/FinalFactory.sol/FinalFactory.json";
 import Treasury from "./build/contracts/artifacts/contracts/Treasury.sol/Treasury.json";
 import MainFactory from "./build/contracts/artifacts/contracts/MainFactory.sol/MainFactory.json";
 import { Voucher } from "./voucher";
@@ -59,10 +60,7 @@ export async function deployMainFactory(TreasuryAddress) {
   }
 }
 
-export async function deployLazyFactory(
-  TreasuryAddress,
-  mainFactoryAddress
-) {
+export async function deployLazyFactory(TreasuryAddress, mainFactoryAddress) {
   try {
     const { signer } = await connectMetaMaskWallet();
     const signerFactory = new ethers.ContractFactory(
@@ -77,6 +75,26 @@ export async function deployLazyFactory(
       "SAY",
       "liberate",
       signerAddress
+    );
+    await signerContract.deployTransaction.wait(); // loading before confirmed transaction
+    return signerContract.address;
+  } catch (e) {
+    console.log("problem deploying: ");
+    console.log(e);
+  }
+}
+export async function deployFinalFactory(TreasuryAddress) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+    const signerFactory = new ethers.ContractFactory(
+      FinalFactory.abi,
+      FinalFactory.bytecode,
+      signer
+    );
+    const signerContract = await signerFactory.deploy(
+      TreasuryAddress,
+      "SAY",
+      "decentralize"
     );
     await signerContract.deployTransaction.wait(); // loading before confirmed transaction
     return signerContract.address;
@@ -169,6 +187,100 @@ export async function fetchTreasuryBalance(contractAddress) {
 
     const balanceInEth = ethers.utils.formatEther(balance);
     return balanceInEth;
+  } catch (e) {
+    console.log("problem buying: ");
+    console.log({ e });
+  }
+}
+
+export async function fetchLazyTokenUri(lazyAddress, tokenId) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+
+    const lazyFactory = new ethers.ContractFactory(
+      LazyFactory.abi,
+      LazyFactory.bytecode,
+      signer
+    );
+
+    const lazyContract = lazyFactory.attach(lazyAddress);
+
+    const uri = await lazyContract.tokenURI(tokenId);
+    return uri;
+  } catch (e) {
+    console.log("problem buying: ");
+    console.log({ e });
+  }
+}
+
+export async function fetchFinalTokenUri(finalFactoryAddress, tokenId) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+
+    const finalFactory = new ethers.ContractFactory(
+      FinalFactory.abi,
+      FinalFactory.bytecode,
+      signer
+    );
+
+    const finalContract = finalFactory.attach(finalFactoryAddress);
+
+    const uri = await finalContract.tokenURI(tokenId);
+    return uri;
+  } catch (e) {
+    console.log("problem buying: ");
+    console.log({ e });
+  }
+}
+
+export async function checkPairAvailability(lazyAddress, pairId) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+
+    const lazyFactory = new ethers.ContractFactory(
+      LazyFactory.abi,
+      LazyFactory.bytecode,
+      signer
+    );
+
+    const lazyContract = lazyFactory.attach(lazyAddress);
+
+    const transaction = await lazyContract.checkToken(pairId);
+
+    return transaction;
+  } catch (e) {
+    console.log("problem buying: ");
+    console.log({ e });
+  }
+}
+
+export async function mintThePair(finalFactoryAddress, pairId, ipfs) {
+  try {
+    const { signer } = await connectMetaMaskWallet();
+    const signerAddress = await signer.getAddress();
+    const finalFactory = new ethers.ContractFactory(
+      FinalFactory.abi,
+      FinalFactory.bytecode,
+      signer
+    );
+
+    const finalContract = finalFactory.attach(finalFactoryAddress);
+
+    const priceWei = ethers.utils.parseUnits((0.02).toString(), "ether");
+    console.log(priceWei);
+    const transaction = await finalContract.safeMint(
+      signerAddress,
+      pairId,
+      ipfs,
+      {
+        value: priceWei,
+      }
+    );
+    const transactionData = await transaction.wait();
+
+    console.log(transactionData);
+
+    return transactionData;
   } catch (e) {
     console.log("problem buying: ");
     console.log({ e });

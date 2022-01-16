@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   connectMetaMaskWallet,
+  deployFinalFactory,
   deployLazyFactory,
   deployMainFactory,
   deployTreasury,
@@ -42,6 +43,7 @@ export default function Main() {
   const [treasuryAddress, setTreasuryAddress] = useState();
   const [mainFactoryAddress, setMainFactoryAddress] = useState();
   const [lazyAddress, setLazyAddress] = useState();
+  const [finalFactoryAddress, setFinalFactoryAddress] = useState();
   const [voucher, setVoucher] = useState();
   const [mintHash, setMintHash] = useState();
 
@@ -51,7 +53,7 @@ export default function Main() {
       lazyAddress,
       needs[0].id,
       2000,
-      0.1
+      0.01
     );
     setUserOneAddress(signerAddress);
     setVoucher(voucher);
@@ -59,10 +61,12 @@ export default function Main() {
 
   // Mint
   const onMint = async () => {
+    setIsLoading(true);
     const { signerAddress } = await connectMetaMaskWallet();
     setUserTwoAddress(signerAddress);
     const { transactionHash } = await mintTheSignature(lazyAddress, voucher);
     setMintHash(transactionHash);
+    setIsLoading(false);
   };
 
   // Deploys
@@ -89,6 +93,13 @@ export default function Main() {
     setIsLoading(false);
   };
 
+  const onFinalFactoryDeploy = async () => {
+    setIsLoading(true);
+    const finalFactoryAddress = await deployFinalFactory(treasuryAddress);
+    setFinalFactoryAddress(finalFactoryAddress);
+    setIsLoading(false);
+  };
+
   return (
     <Grid
       container
@@ -108,10 +119,12 @@ export default function Main() {
           needs={needs}
           onTreasuryDeploy={onTreasuryDeploy}
           onMainFactoryDeploy={onMainFactoryDeploy}
+          onFinalFactoryDeploy={onFinalFactoryDeploy}
           treasuryAddress={treasuryAddress}
           mainFactoryAddress={mainFactoryAddress}
           onLazyFactoryDeploy={onLazyFactoryDeploy}
           lazyAddress={lazyAddress}
+          finalFactoryAddress={finalFactoryAddress}
           onSign={onSign}
           userOneAddress={userOneAddress}
           voucher={voucher}
@@ -121,6 +134,7 @@ export default function Main() {
         />
       </Grid>
       <Grid item xs={4}>
+        3 NFTs
         <Box
           sx={{
             width: 100,

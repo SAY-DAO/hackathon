@@ -74,21 +74,6 @@ export default function MintSteps({
   //   }
   // }, [successMyStore, signChecked, imageUrl]);
 
-  // IPFS
-  // const handleIpfsUpload = async () => {
-  //   if (client) {
-  //     try {
-  //       const added = await client.add(images[0].file, {
-  //         progress: (prog) => console.log(`received: ${prog}`),
-  //       });
-  //       const url = `${process.env.REACT_APP_IPFS}/ipfs/${added.path}`;
-  //       setImageUrl(url);
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   }
-  // };
-
   const balanceHandler = async () => {
     setIsLoading(true);
     const theBalance = await fetchTreasuryBalance(treasuryAddress);
@@ -144,6 +129,41 @@ export default function MintSteps({
     const tokenUri = await fetchFinalTokenUri(finalFactoryAddress, inputValue);
     setTokenURI(tokenUri);
     setIsLoading(false);
+  };
+
+  // IPFS
+  const handleIpfsUpload = async () => {
+    await fetch(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Random_walk_25000.gif/640px-Random_walk_25000.gif",
+      {
+        method: "GET", // *GET, POST, PUT, DELETE, etc.
+      }
+    )
+      .then((res) => res.blob()) // Gets the response and returns it as a blob
+      .then(async (blob) => {
+        blob.lastModifiedDate = new Date();
+        blob.name = "fileName";
+        // Here, I use it to make an image appear on the page
+        let objectURL = URL.createObjectURL(blob);
+        let myImage = new Image();
+
+        if (client) {
+          try {
+            const added = await client.add(blob, {
+              progress: (prog) => console.log(`received: ${prog}`),
+            });
+            console.log(added);
+
+            const url = `${process.env.REACT_APP_IPFS}/ipfs/${added.path}`;
+            setIpfsUrl(url);
+
+          } catch (e) {
+          }
+        }
+
+        myImage.src = objectURL;
+        document.getElementById("myImg").appendChild(myImage);
+      });
   };
 
   return (
@@ -387,7 +407,7 @@ export default function MintSteps({
             </p>
             <p>
               IPFS:
-              <a href={ipfsUrl}>{userThreeAddress}</a>
+              <a href={ipfsUrl}>{ipfsUrl}</a>
             </p>
           </div>
         </AccordionSummary>
@@ -432,13 +452,8 @@ export default function MintSteps({
             </Box>
 
             <br />
-            <div>
-              <a
-                href="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-                download
-              >
-                Click to download
-              </a>
+            <div id="myImg">
+              <button onClick={handleIpfsUpload}>file</button>
             </div>
           </Grid>
         </AccordionDetails>

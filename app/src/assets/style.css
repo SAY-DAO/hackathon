@@ -8,7 +8,10 @@
   }
   
 
-
   .text {
     margin: auto;
+  }
+
+  #myImg img{
+    width: 150px;
   }

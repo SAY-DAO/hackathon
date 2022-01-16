@@ -38,7 +38,7 @@ contract LazyFactory is
 
   event RedeemedAndMinted(uint256 indexed tokenId);
 
-  mapping(address => uint256) private balanceByAddress;
+  mapping(uint256 => bool) private tokenById;
 
   constructor(
     address payable treasuryAddress,
@@ -73,9 +73,10 @@ contract LazyFactory is
     InterfaceMain mainFactoryInterface = InterfaceMain(mainFactory);
     mainFactoryInterface.safeMint(msg.sender, voucher.needId, voucher.tokenUri);
 
+    tokenById[voucher.needId] = true;
+
     uint256 amount = msg.value;
     payable(Treasury).transfer(amount);
-
     emit RedeemedAndMinted(voucher.needId);
   }
 
@@ -110,6 +111,11 @@ contract LazyFactory is
       id := chainid()
     }
     return id;
+  }
+
+  function checkToken(uint256 tokenId) public view returns (bool) {
+    require(tokenById[tokenId], "This Pair Dies not Exist");
+    return true;
   }
 
   function supportsInterface(bytes4 interfaceId)
